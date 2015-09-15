@@ -1,0 +1,1031 @@
+FORMAT: 1A
+TITLE: CyberCAPTOR API Open Specification
+DATE: September 2015
+
+# CyberCAPTOR server API Open Specification
+
+This is the Open Specification of the REST API of **CyberCAPTOR server**.
+**CyberCAPTOR server** is the Java Server of [FIWARE Cyber seCurity Attack graPh moniTORing](https://github.com/fiware-cybercaptor/cybercaptor-server).
+**CyberCAPTOR** implements the FIWARE CyberSecurity Generic Enabler.
+  
+# Group REST API without inititialization
+This group of REST calls contains the API calls that **do not need** the `/initialize` call that loads the vulnerability and remediation database and generates the attack graph and the attack paths.
+
+## Group Version [/rest/version]
+Get REST API version information. Generally useful to test that the installation is working.
+
+### Version [GET /rest/version]
+Get the simple version of the API. 
+
++ Response 200 (text/plain)
+
+        4.4
+
+### VersionDetailed [GET /rest/version/detailed]
+Get the API version in JSON.
+
++ Response 200 (application/json)
+    + Body
+
+            {"version":"4.4"}
+            
+## Group Configuration [/rest/json/configuration]
+This group contains the calls related to the configuration (remediation cost parameters...).
+
+### Get global remediation cost parameters [GET /rest/json/configuration/remediation-cost-parameters/global]
+Get the global remediation cost parameters.
+
++ Response 200 (application/json)
+    + Body
+
+            {"global_parameters":{}}
+
+### Set global remediation cost parameters [POST /rest/json/configuration/remediation-cost-parameters/global]
+Set the global remediation cost parameters.
+
++ Request (application/json)
+
+        {"global_parameters":{"expensesForIT":15000}}
+
++ Response 200 (application/json)
+
+        {}
+            
+### Get snort rule remediation cost parameters [GET /rest/json/configuration/remediation-cost-parameters/snort-rule]
+Get the operational cost parameters for a snort rule.
+
++ Response 200 (application/json)
+    + Body
+
+            {"operational_cost_parameters":{}}
+
+### Set snort rule remediation cost parameters [POST /rest/json/configuration/remediation-cost-parameters/snort-rule]
+Set the operational cost parameters for a snort rule.
+
++ Request (application/json)
+
+        {"operational_cost_parameters":{"computationPowerCost":12,"skillRateMaintenance":1,"restartDuration":0.2,"usedStorage":1,"storageCost":5,"skillRateTests":0.7,"deploymentDuration":0.5,"businessApplicationsTestsDuration":4,"maintenanceDuration":10,"remediationCost":10,"remediationUninstallDuration":0.5,"usedPower":1,"serviceUnavailabilityDeploymentDuration":0,"skillRateDeployment":2,"workCost":20,"restartCost":0}}
+
++ Response 200 (application/json)
+
+        {}
+            
+### Get firewall rule remediation cost parameters [GET /rest/json/configuration/remediation-cost-parameters/firewall-rule]
+Get the operational cost parameters for a firewall rule.
+
++ Response 200 (application/json)
+    + Body
+
+            {"operational_cost_parameters":{}}
+
+### Set firewall rule remediation cost parameters [POST /rest/json/configuration/remediation-cost-parameters/firewall-rule]
+Set the operational cost parameters for a firewall rule.
+
++ Request (application/json)
+
+        {"operational_cost_parameters":{"computationPowerCost":12,"skillRateMaintenance":1,"restartDuration":0.5,"usedStorage":0,"storageCost":10,"skillRateTests":1,"deploymentDuration":0.5,"businessApplicationsTestsDuration":6,"maintenanceDuration":0,"remediationCost":0,"remediationUninstallDuration":0.1,"usedPower":0.1,"serviceUnavailabilityDeploymentDuration":0,"skillRateDeployment":1.2,"workCost":20,"restartCost":10}}
+
++ Response 200 (application/json)
+
+        {}
+            
+### Get patch remediation cost parameters [GET /rest/json/configuration/remediation-cost-parameters/patch]
+Get the operational cost parameters for a patch.
+
++ Response 200 (application/json)
+    + Body
+
+            {"operational_cost_parameters":{}}
+
+### Set patch remediation cost parameters [POST /rest/json/configuration/remediation-cost-parameters/patch]
+Set the operational cost parameters for a patch.
+
++ Request (application/json)
+
+        {"operational_cost_parameters":{"computationPowerCost":5,"skillRateMaintenance":1,"restartDuration":0.5,"usedStorage":0,"storageCost":3,"skillRateTests":0.7,"deploymentDuration":3,"businessApplicationsTestsDuration":4,"maintenanceDuration":0.5,"remediationCost":5,"remediationUninstallDuration":1,"usedPower":0,"serviceUnavailabilityDeploymentDuration":0.5,"skillRateDeployment":1.5,"workCost":20,"restartCost":10}}
+
++ Response 200 (application/json)
+
+        {}
+
+## Group IDMEF
+REST API calls related to IDMEF alerts. See https://www.ietf.org/rfc/rfc4765.txt for more IDMEF alerts information.
+
+### Add IDMEF alerts [POST /rest/json/idmef/add]
+From an XML IDMEF file containing alerts.
+
++ Request (application/xml)
+
+        <?xml version="1.0" encoding="UTF-8"?>
+        <idmef:IDMEF-Message xmlns:idmef="http://iana.org/idmef" version="1.0">
+          <idmef:Alert messageid="abc123456789">
+            <idmef:Analyzer analyzerid="bc-sensor01">
+              <idmef:Node category="dns">
+                <idmef:name>sensor.example.com</idmef:name>
+              </idmef:Node>
+            </idmef:Analyzer>
+            <idmef:CreateTime ntpstamp="0xbc71f4f5.0xef449129">2000-03-09T10:01:25.93464Z</idmef:CreateTime>
+            <idmef:Source ident="a1a2" spoofed="yes">
+              <idmef:Node ident="a1a2-1">
+                <idmef:Address ident="a1a2-2" category="ipv4-addr">
+                  <idmef:address>192.0.2.200</idmef:address>
+                </idmef:Address>
+              </idmef:Node>
+            </idmef:Source>
+            <idmef:Target ident="b3b4">
+              <idmef:Node>
+                <idmef:Address ident="b3b4-1" category="ipv4-addr">
+                  <idmef:address>192.0.2.50</idmef:address>
+                </idmef:Address>
+              </idmef:Node>
+            </idmef:Target>
+            <idmef:Target ident="c5c6">
+              <idmef:Node ident="c5c6-1" category="nisplus">
+                <idmef:name>lollipop</idmef:name>
+              </idmef:Node>
+            </idmef:Target>
+            <idmef:Target ident="d7d8">
+              <idmef:Node ident="d7d8-1">
+                <idmef:location>Cabinet B10</idmef:location>
+                <idmef:name>Cisco.router.b10</idmef:name>
+              </idmef:Node>
+            </idmef:Target>
+            <idmef:Classification text="Ping-of-death detected">
+              <idmef:Reference origin="cve">
+                <idmef:name>CVE-1999-128</idmef:name>
+                <idmef:url>http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-1999-128</idmef:url>
+              </idmef:Reference>
+            </idmef:Classification>
+          </idmef:Alert>
+        </idmef:IDMEF-Message>
+
++ Response 200 (application/json)
+
+        {"success":"IDMEF alerts added successfully"}
+
+# Group REST API after initialization
+This group contains thte API calls **after** the `/initialize` call that loads the vulnerability and remediation database and generates the attack graph and the attack paths.
+
+## Initialize [/rest/json/initialize]
+Generates the attack graph and initializes the main objects needed by other API calls (database, attack graph, attack paths,...).
+
+### Initialize from data on disk [GET]
+From the data on disk (.csv inputs files and Nessus vulnerability scan)
+
++ Response 200 (application/json)
+
+        {"status":"Loaded"}
+
+### Initialize from XML topology [POST]
+From an XML topology file containing all information about network topology, firewalling, routing configuration, vulnerabilities...
+
++ Request (application/xml)
+
+        <topology>
+        <machine>
+        <name>linux-user-1</name>
+        <security_requirement>7</security_requirement>
+        <interfaces>
+        <interface>
+        <name>eth0</name>
+        <ipaddress>192.168.1.111</ipaddress>
+        <vlan>
+        <name>user-lan</name>
+        <label>user-lan</label>
+        </vlan>
+        </interface>
+        </interfaces>
+        <routes>
+        <route>
+        <destination>0.0.0.0</destination>
+        <mask>0.0.0.0</mask>
+        <gateway>192.168.1.111</gateway>
+        <interface>eth0</interface>
+        </route>
+        </routes>
+        </machine>
+        <machine>
+        <name>linux-user-2</name>
+        <security_requirement>30</security_requirement>
+        <interfaces>
+        <interface>
+        <name>eth0</name>
+        <ipaddress>192.168.1.112</ipaddress>
+        <vlan>
+        <name>user-lan</name>
+        <label>user-lan</label>
+        </vlan>
+        </interface>
+        </interfaces>
+        <services>
+        <service>
+        <name>mdns</name>
+        <ipaddress>192.168.1.112</ipaddress>
+        <protocol>udp</protocol>
+        <port>5353</port>
+        <vulnerabilities>
+        <vulnerability>
+        <type>remoteExploit</type>
+        <cve>CVE-2007-2446</cve>
+        <goal>privEscalation</goal>
+        <cvss>10.0</cvss>
+        </vulnerability>
+        </vulnerabilities>
+        </service>
+        </services>
+        <routes>
+        <route>
+        <destination>0.0.0.0</destination>
+        <mask>0.0.0.0</mask>
+        <gateway>192.168.1.111</gateway>
+        <interface>eth0</interface>
+        </route>
+        </routes>
+        </machine>
+        </topology>
+
++ Response 200 (application/json)
+
+        {"status":"Loaded"}
+
+## Group Get the XML topology [/rest/json/topology]
+Get the XML topology (for example, this can be used to backup the topology, and to load it again with /initialize)
+
+### Get XML topology [GET]
+Get the XML topology for backup
+
++ Response 200 (application/xml)
+
+    + Headers
+
+            Content-Length: 2174
+
+    + Body
+
+            <topology>
+              <machine>
+                <name>linux-user-1</name>
+                <cpe>cpe:/</cpe>
+                <interfaces>
+                  <interface>
+                    <name>eth0</name>
+                    <vlan>
+                      <name>user-lan</name>
+                      <label>user-lan</label>
+                    </vlan>
+                    <ipaddress>192.168.1.111</ipaddress>
+                    <directly-connected>
+                      <ipaddress>192.168.1.112</ipaddress>
+                    </directly-connected>
+                  </interface>
+                </interfaces>
+                <services />
+                <routes>
+                  <route>
+                    <destination>0.0.0.0</destination>
+                    <mask>0.0.0.0</mask>
+                    <gateway>192.168.1.111</gateway>
+                    <interface>eth0</interface>
+                  </route>
+                </routes>
+                <input-firewall>
+                  <default-policy>ACCEPT</default-policy>
+                </input-firewall>
+                <output-firewall>
+                  <default-policy>ACCEPT</default-policy>
+                </output-firewall>
+              </machine>
+              <machine>
+                <name>linux-user-2</name>
+                <cpe>cpe:/</cpe>
+                <interfaces>
+                  <interface>
+                    <name>eth0</name>
+                    <vlan>
+                      <name>user-lan</name>
+                      <label>user-lan</label>
+                    </vlan>
+                    <ipaddress>192.168.1.112</ipaddress>
+                    <directly-connected>
+                      <ipaddress>192.168.1.111</ipaddress>
+                    </directly-connected>
+                  </interface>
+                </interfaces>
+                <services>
+                  <service>
+                    <name>mdns</name>
+                    <ipaddress>192.168.1.112</ipaddress>
+                    <protocol>TCP</protocol>
+                    <port>5353</port>
+                    <CPE>cpe:/</CPE>
+                    <vulnerabilities>
+                      <vulnerability>
+                        <type>remoteExploit</type>
+                        <goal>privEscalation</goal>
+                        <cve>CVE-2007-2446</cve>
+                      </vulnerability>
+                    </vulnerabilities>
+                  </service>
+                </services>
+                <routes>
+                  <route>
+                    <destination>0.0.0.0</destination>
+                    <mask>0.0.0.0</mask>
+                    <gateway>192.168.1.111</gateway>
+                    <interface>eth0</interface>
+                  </route>
+                </routes>
+                <input-firewall>
+                  <default-policy>ACCEPT</default-policy>
+                </input-firewall>
+                <output-firewall>
+                  <default-policy>ACCEPT</default-policy>
+                </output-firewall>
+              </machine>
+            </topology>
+
+
+
+## Group Hosts [/rest/json/host/list]
+This group contains the calls related to hosts, after initialization.
+
+### Get the host list [GET]
+Get the list of hosts with their security requirements.
+
++ Response 200 (application/json)
+
+        {"hosts":[]}
+        
+### Set the host list [POST]
+Set the hosts and their security_requirements.
+
++ Request (application/json)
+
+        {"hosts":[{"security_requirements":[{"metric":"High","name":"sec-req-xml"}],"name":"linux-user-1"},{"security_requirements":[{"metric":"High","name":"sec-req-xml"}],"name":"linux-user-2"}]}
+
++ Response 200 (application/json)
+
+        {}
+        
+## Group Attack graphs [/rest/json/attack_graph]
+This group contains the calls related to the attack graph, after initialization.
+
+### Get the attack graph [GET]
+Get the whole attack graph.
+
++ Response 200 (application/json)
+
+        {"attack_graph":{"arcs":{},"vertices":{}}}
+        
+### Get the attack graph score [GET /rest/json/attack_graph/score]
+Get the attack graph score.
+
++ Response 200 (application/json)
+
+        {"score":""}
+        
+### Get the topological attack graph [GET /rest/json/attack_graph/topological]
+Get the attack graph in its topological form.
+
++ Response 200 (application/json)
+
+        {"arcs":{}, "vertices":{}}
+        
+## Group Attack paths [/rest/json/attack_path]
+This group contains the calls related to the attack paths, after initialization.
+
+### Get the attack paths list [GET /rest/json/attack_path/list]
+Get the list of attack paths.
+
++ Response 200 (application/json)
+
+        {"attack_paths":{}}
+        
+### Get the number of attack paths [GET /rest/json/attack_path/number]
+Get the total number of attack paths.
+
++ Response 200 (application/json)
+
+        {"number":2}
+
+### Get one attack path [GET /rest/json/attack_path/{id}]
+Get the attack path {id}.
+
++ Parameters
+    + id: 0 (number, required) - The number of attack path to get
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + id: 0
+    + Body
+
+            {"attack_path":{}}
+
+### Get one attack path in topological form [GET /rest/json/attack_path/{id}/topological]
+Get the attack path {id} as a topological graph.
+
++ Parameters
+    + id: 0 (number, required) - The number of attack path to get in topological form
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + id: 0
+    + Body
+
+            {"arcs":{}, "vertices":{}}
+            
+### Get the remediations to an attack path [GET /rest/json/attack_path/{id}/remediations]
+Get the remediations of the attack path {id}.
+
++ Parameters
+    + id: 0 (number, required) - The number of the attack path for which remediations will be calculated
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + id: 0
+    + Body
+
+            {"remediations":{}}
+            
+### Simulate the remediation to an attack path [GET /rest/json/attack_path/{id}/remediation/{id_remediation}]
+Simulate the remediation {id_remediation} of the path {id}, and compute the new attack graph.
+
++ Parameters
+    + id: 0 (number, required) - The number of the attack path for which remediations will be calculated
+    + id_remediation: 0 (number, required) - The number of the remediation to apply.
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + id: 0
+        + id_remediation: 0
+    + Body
+
+            {"attack_graph":{"arcs":{},"vertices":{}}
+
+### Validate the remediation to an attack path [GET /rest/json/attack_path/{id}/remediation/{id_remediation}/validate]
+Validate that the remediation {id_remediation} of the path {id} has been applied.
+
++ Parameters
+    + id: 0 (number, required) - The number of the attack path for which remediations will be calculated
+    + id_remediation: 0 (number, required) - The number of the remediation to validate.
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + id: 0
+        + id_remediation: 0
+    + Body
+
+            {"success":"The remediation has been validated."}
+
+# Cybersecurity GE P2DS API Open Specification
+
+This is the specification for that part of the Cybersecurity GE that is concerned
+with managing groups of peers for privacy-preserving data sharing, or P2DS. P2DS
+is achieved through secure multiparty computation, or SMCP.
+
+## Editors
+
+  1. Stephan Neuhaus, ZHAW
+  2. Roman Müntener, ZHAW
+  
+  
+## Contributors
+
+
+## Acknowledgements
+
+The editors would like to express their gratitude to Quöllfrisch, whose
+products greatly helped write this specification. 
+
+
+## Versions
+
+  + This Version: http://
+  + Previous version: http://
+  + Latest version: http://
+  
+
+## Status
+
+Some boilerplate text regarding the status of the document, Licenses (automatically included),
+mailing list to be contacted for support etc. 
+
+## Conformance
+
+Put here the criteria that must be met to declare an implementation conformant to this spec. 
+
+# Specification
+
+This section is intended to describe the main concepts, constructs, data structures etc. used by your specification.
+
+## Introduction
+
+The main issue is the following: when organisations are asked to share data about
+security, they are naturally reluctant to do so, because revealing this data may
+lead to loss of trust or it may reveal details of the organisation's business that
+a competitor could use to its advantage. On the other hand, sharing data could be
+mutually beneficial. For example, when an organisation is the victim of a
+denial-of-service attack, it is useful to know whether other organisations are also
+a victim. This is where privacy-preserving data sharing comes in.
+
+The technology for P2DS, called [SEPIA](http://www.sepia.ee.ethz.ch/) was
+developed as part of a PhD thesis at ETH Zurich.
+
+In this API, there are several instances where a registration code is transported
+in the URL. This registration code is an authentication token; everyone with
+that authentication token can access the service. It is therefore a very, very good
+idea to use https on these calls, and probably https everywhere.
+
+## Terminology
+
+Let's say we have three organisations, called Domain 1, Domain 2, and Domain 3
+in the graphic, that want to know the total number of attacks seen in the last
+24 hours, with a granularity of five minutes. In mathematical terms, what these
+organisations want is x1 + x2 + x3, where x1, x2, and x3 are vectors with
+24*60/5 = 288 elements, and they want to do this without revealing their own
+xi to any of the other domains. Here is how the three domains could use P2DS
+for their needs.
+
+First, each domain provides an input peer. This is a service that is run by each
+domain, which knows the original, private xi from domain i.
+
+Next, someone provides a number of privacy peers. These services can be run by
+anyone; they never have access to unencrypted data, so it doesn't matter who runs
+them. The only thing that matters is that the privacy peers are for the most part
+diligent, i.e., faithfully carry out their assigned task. The SEPIA protocol can
+tolerate a small number of malicious peers; only when more than this number of
+peers are malicious will the computation be deemed unsuccessful. The privacy peers
+execute a multi-round protocol in which they exchange encrypted information and
+perform computations on these encrypted values to get yet more encrypted values.
+No one learns the cleartext values of these encrypted vectors, not the privacy peers,
+not the domains.
+
+But when the computation is finished, the end result becomes available in the clear
+and each domain can learn the value of x1 + x2 + x3. For example, Domain 1 learns
+the value of x1 + x2 + x3, but knows nothing about x2 or x3, except, trivially,
+their sum.
+
+In our GE, the privacy peers are provided by the domains.
+
+A final component of our contribution is the group manager. This is the service
+that knows which input peers and which privacy peers should cooperate in a
+computation, which keeps the peers' public key certificates, and which provides
+SEPIA configuration when it is time to start the computation. It does not have to
+be especially trusted (none of the data it has is particularly secret) but it must
+be authentic, in the sense that the data it keeps should be protected against
+unauthorised alteration.
+
+There are a few caveats in using SEPIA:
+
++ When there are only two input peers and they compute a sum, each peer can compute
+the contribution of the other peer through a simple subtraction: If I know x and x + y,
+I can compute y as (x + y) - x.
++ In general, when there are n ≥ 3 input peers and n - 1 of them collude to defraud
+the remaining one, they can simply exchange their own input vectors through a side
+channel.
++ In general, SEPIA is secure in what is known as the honest but curious adversary
+model, in which adversaries try to learn the contents of messages but will not
+actively try to disrupt the protocol.
+
+## Concepts
+
+Please refer to the Introduction for the concepts used in this specification.
+
+## Data Structures
+
+### Group (object)
+    + gid (number) - The group's identifier, guaranteed to be unique for this group manager.
+    + name (string) - A descriptive name of a group
+
+### PeerInfo (object)
+    + gid (number) - The group to which this peer belongs.
+    + lastStatus (number) - The last known status of this peer (unknown = 0, started = 1, error = 2, stopped = 3)
+    + peerName (string) - A descriptive name for the peer.
+    + peerType (number) - The type of peer (input peer = 1, privacy peer = 2)
+    + publicKey (string) - The peer's public key.
+    + url (string) - The URL at which to contact the peer.
+
+### DataSet (object)
+    + data (string) - semicolon seperated integers
+    + peerName (string) - Name of the peer to add the data set for
+    
+### DataSets (object)
+    + data (list) - List of semicolon seperated integers
+    + peerName (string) - Name of the peer
+    
+### GroupConfigurationInfo (object)
+    + field (string) - Field value for the underlying MPC protocol; a good value is 9223372036854775783 (BigInteger as String)
+    + maxElement (string) - Maximum value the underlying MPC protocol shall accept (BigINteger as String)
+    + gid (int) - ID of the group
+    + mpcProtocol (string) - MPC protocol to use.
+    + numberOfItems (int) - Number of items within a single data sets.
+    + numberOfTimeSlots (int) - Number of time slots (in other terms, how many data sets are expected). Negative values mean an infinite amount (pure streaming).
+    + resultBufferSize (number) - Size of the buffer for final results
+    
+### GroupName (object)
+    + name (string) - Name of the group
+    
+### Peer (object) 
+    + gid (number) - The group to which this peer belongs.
+    + lastStatus (number) - The last known status of this peer (unknown = 0, started = 1, error = 2, stopped = 3)
+    + peerName (string) - A descriptive name for the peer (informational only).
+    + peerType (number) - The type of peer (input peer = 1, privacy peer = 2)
+    + publicKey (string) - The peer's public key.
+    + url (string) - The URL at which to contact the peer.
+    + registrationCode (string) - The registration code used to register this peer.
+    + verified (boolean) - Whether this peer has been marked as verified or not.
+    
+### Registration (object)
+    + gid (number) - ID of the group.
+    + registrationCode (string) - The registration code.
+    
+### PeerConfigurationInfo (object)
+    + name (string) - Name of the peer
+    + registrationCode (string) - Registration code
+    + publicKey (string) - public key (base64 encoded)
+    + privateKey (string) - private key (base64 encoded)
+    + groupMgmtURL (string) - URL of the group management service.
+    + peerType (int) - Type of the peer (1 = input peer, 2 = privacy peer)
+    + finalResultsURL (string) - URL to send final results to.
+
+### PeerConfigurationInfoCollection (object)
+    + peers - List of PeerConfiguration (peers)
+    
+# REST API
+
+## Peer Service [/peer]
+
+### Add peer [POST /peer{?adminKey}]
+
+Add a peer to the service and register it at the group management service. 
+
++ Parameters
+    + adminKey: foobar (required, string) - Admin key
+    
++ Request (application/json)
+
+    + Body
+           
+            {"finalResultsURL":"http://localhost:12001/p2ds-receiver/demo/receive","peerType":1,"name":"peerhans", "privateKey":"MFECAQAwEAYHKoZIzj0CAQYFK4EEACQEOjA4AgEBBDNyjBeP85atxkIfiYqW+0kUB2H3guXcQWXT/tXVktbn3MyUdRmNIL99G3rK1XoGSRAM6js=", "publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=", "registrationCode":"TEST", "groupMgmtURL":"http://localhost:12001/p2ds-group-management/group-mgmt"}
+
++ Response 200 (application/json)
+
+        {"finalResultsURL":"http://localhost:12001/p2ds-receiver/demo/receive","peerType":1,"name":"peerhans", "privateKey":"MFECAQAwEAYHKoZIzj0CAQYFK4EEACQEOjA4AgEBBDNyjBeP85atxkIfiYqW+0kUB2H3guXcQWXT/tXVktbn3MyUdRmNIL99G3rK1XoGSRAM6js=", "publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=", "registrationCode":"TEST", "groupMgmtURL":"http://localhost:12001/p2ds-group-management/group-mgmt"}
+
++ Response 403 (text/plain)
+
+### Delete peer [DELETE /peer/{peerName}{?adminKey}]
+
+Delete a peer.
+
++ Parameters
+    + adminKey: foobar (required, string) - Admin key
+    + peerName: peerhans (required, string) - Name of the peer.
+    
++ Response 200 (text/plain)
+
++ Response 403 (text/plain)
+
++ Response 404 (text/plain)
+
+### List peers [GET /peers{?adminKey]]
+
+List all peers.
+
++ Parameters
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (application/json)
+        
+        {"peers":[{"name":"peerhans", "privateKey":"MFECAQAwEAYHKoZIzj0CAQYFK4EEACQEOjA4AgEBBDNyjBeP85atxkIfiYqW+0kUB2H3guXcQWXT/tXVktbn3MyUdRmNIL99G3rK1XoGSRAM6js=", "publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=", "registrationCode":"TEST", "groupMgmtURL":"http://localhost:12001/p2ds-group-management/group-mgmt"}]}
+    
++ Response 403 (text/plain)
+
+### Add Input Data Set [POST /input{?registrationCode}]
+
+This method can be used to add a single input data set. The target peer must be
+an input peer.
+
++ Parameters
+    + registrationCode: foobar (required, string) - Registration code
+    
++ Request (application/json)
+    + Body
+    
+            {"peerName":"peerhans","data":"3;4"}
+
++ Response 200 (text/plain)
+
++ Response 400 (text/plain)
+
+### Add Input Data Sets [POST /inputs{?registrationCode}]
+
+This method can be used to add multiple input data sets. The target peer must be an input peer.
+
++ Parameters
+    + registrationCode: foobar (required, string) - Registration code
+    
++ Request (application/json)
+    + Body
+    
+            {"peerName":"peerhans","data":["3;4","1;1"]}
+
++ Response 200 (text/plain)
+
++ Response 400 (text/plain)
+
+### Receive Message [POST /message/{recipient}/{sender}/{type}{?signature}]
+
+This method is called by the peer services automatically. This method will accept messages
+and verify their integrity. 
+
++ Parameters
+    + recipient: peer (required, string) - Name of the recipient
+    + sender: peer2 (required, string) - Name of the sender
+    + type: AdditiveMessage (required, string) - Type of the message. The types varies depending on the selected mpc protocol.
+    + signature: ... (required, string) - Signature bytes base64-encoded. 
+
++ Request (text/plain)
+    + Body
+    
+            The data of the message as JSON. 
+
++ Response 200 (text/plain)
+
++ Response 404 (text/plain)
+
+### Start a peer [POST /start/{peerName}{?registrationCode}]
+
+Can be manually invoked or by the group management service. Starts the peer.
+
++ Parameters
+    + peerName: peer (required, string) - Name of the peer
+    + registrationCode: foobar (required, string) - Registration code
+    
++ Response 200 (application/json)
+
+        {"gid":1,"lastStatus":0,"peerName":"peerhans","peerType":1,"publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","url":"https://localhost:12001/p2ds-input-peer/peer"}
+        
++ Response 400 (text/plain)
+
++ Response 404 (text/plain)
+
+### Stop a peer [POST /stop/{peerName}{?registrationCode}]
+
+Can be manually invoked or by the group management service. Stops the peer.
+
++ Parameters
+    + peerName: peer (required, string) - Name of the peer
+    + registrationCode: foobar (required, string) - Registration code
+    
++ Response 200 (text/plain)
+
++ Response 400 (text/plain)
+
+## Group Management Service [/group-mgmt]
+
+### Verify Peer [POST /verify/{peerName}{?adminKey,verified}]
+
+This method sets the verified flag of a peer.
+
++ Parameters
+    + peerName: peer1 (required, string) - Name of the peer.
+    + adminKey: foobar (required, string) - Admin key
+    + verified: true (required, boolean) - Value of the verified flag (true or false).
+    
++ Response 200 (application/json)
+
++ Response 403 (text/plain)
+
++ Response 404 (text/plain)
+
+### Upload PublicKey [POST /publicKey/{peerName}{?registrationCode}]
+
+This method can be used to upload the public key of a peer.
+
++ Parameters
+    + peerName: peer1 (required, string) - Name of the Peer.
+    + registrationCode: foobar (required, string) - Registration code
+    
++ Request (text/plain)
+
+        You need to upload the key as text/plain. The key needs to be transmitted as base64-encoded. 
+    
++ Response 200 (application/json)
+        
+        {"gid":1,"lastStatus":0,"peerName":"hanspeer","peerType":1,"publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","url":"https://localhost:12001/p2ds-input-peer/peer"}
+    
++ Response 400 (text/plain)
+
++ Response 404 (text/plain)
+
+### Get Configuration [GET /configuration/{peerName}{?registrationCode}]
+
+This method can be used to download the current group's configuration the peer is member of.
+
++ Parameters
+    + peerName: 1 (required, number) - Name of the peer
+    + registrationCode: foobar (required, string) - Registration code
+    
++ Response 200 (application/json)
+
+        {"field":"1013","gid":"1","maxElement":"1000","mpcProtocol":"additive","numberOfItems":"2","numberOfTimeSlots":"2"}
+
++ Response 400 (text/plain)
+
++ Response 404 (text/plain)
+
+### Get group information [GET /groupInfo/{peerName}{?registrationCode}]
+
+This method can be used to obtain information about the current group the peer is member of.
+
++ Parameters
+    + peerName: peer2 (required, number) - Name of the peer
+    + registrationCode: foobar (required, string) - Registration code
+    
++ Response 200 (application/json)
+
+        {"peers":[{"gid":1,"lastStatus":0,"peerName":"hanspeer","peerType":1,"publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","url":"https://localhost:12001/p2ds-input-peer/peer"},{"gid":1,"lastStatus":0,"peerName":"peerhans","peerType":1,"publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","url":"https://localhost:12001/p2ds-input-peer/peer"},{"gid":1,"lastStatus":0,"peerName":"ppeer","peerType":2,"publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","url":"https://localhost:12001/p2ds-privacy-peer/peer"},{"gid":1,"lastStatus":0,"peerName":"ppeer2","peerType":2,"publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","url":"https://localhost:12001/p2ds-privacy-peer/peer"},{"gid":1,"lastStatus":0,"peerName":"ppeer3","peerType":2,"publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","url":"https://localhost:12001/p2ds-privacy-peer/peer"}]}
+
++ Response 404 (text/plain)
+
++ Response 400 (text/plain)
+
+
+### Get group [GET /group/{gid}{?adminKey}]
+
+This method can be used to obtain information about a specific group. 
+
++ Parameters
+    + gid: 1 (required, number) - ID of the group
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (application/json)
+
+        {"gid":"1","name":"huhu"}
+
++ Response 404 (text/plain)
+
+### Create group [POST /group{?adminKey}]
+
+This method can be used to create a group.
+
++ Parameters
+    + adminKey: foobar (required, string) - Admin key
+    
++ Request (application/json)
+
+    + Body
+    
+            {"name":"huhu"}
+    
++ Response 200 (application/json)
+
++ Response 403 (text/plain)
+
+### Register a peer [POST /register/{registrationCode}{?url,name,type}]
+
+Used to register a peer (this method will be called by the peer services automatically).
+
++ Parameters
+    + registrationCode: foobar (required, string) - Registration code
+    + url: https://localhost:12001/p2ds-input-peer/peer (required, string) - URL the peer can be reached at
+    + type: 1 (required, number) - Type of the peer (1 = input, 2 = privacy)
+    + name: peer1 (required, string) - Name of the peer.
+    
++ Response 200 (application/json)
+
+        {"gid":1,"lastStatus":0,"peerName":"peerhans","peerType":1,"publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","url":"https://localhost:12001/p2ds-input-peer/peer"}
+        
++ Response 400 (text/plain)
+
+### Generate registration code [POST /registration/{gid}{?adminKey}]
+
+Generate a registration code. 
+
++ Parameters
+    + gid: 1 (required, number) - ID of the group
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (application/json)
+
+        {"gid":"1","registrationCode":"TEST"}
+        
++ Response 404 (text/plain)
+
++ Response 403 (text/plain)
+
+### Delete group [DELETE /group/{groupId}{?adminKey}]
+
+Delete a group.
+
++ Parameters
+    + groupId: 1 (required, number) - ID of the group
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (text/plain)
+
++ Response 404 (text/plain)
+
++ Response 403 (text/plain)
+
+### Delete peer [DELETE /peer/{peerName}{?adminKey}]
+
+Delete a peer.
+
++ Parameters
+    + peerName: peer1 (required, number) - Name of the peer.
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (text/plain)
+
++ Response 404 (text/plain)
+
++ Response 403 (text/plain)
+
+### Set configuration [POST /configuration/{?adminKey}]
+
+Set the configuration for a group.
+
++ Parameters
+    + adminKey: foobar (required, string) - Admin key
+    
++ Request (application/json)
+    + Body
+        
+            {"field":"1013","gid":"1","maxElement":"1000","mpcProtocol":"additive","numberOfItems":"2","numberOfTimeSlots":"2"}
+    
++ Response 200 (application/json)
+
+        {"field":"1013","gid":"1","maxElement":"1000","mpcProtocol":"additive","numberOfItems":"2","numberOfTimeSlots":"2"}
+
++ Response 404 (text/plain)
+
++ Response 403 (text/plain)
+
+### Update peer status [POST /status/{peerName}{?registrationCode,status}]
+
+Update the status of a peer (the peer services will call this method automatically).
+
++ Parameters
+    + peerName: peer11 (required, string) - Name of the peer.
+    + registrationCode: foobar (required, string) - Registration code
+    + status: 1 (required, number) - Status (1 = started, 2 = error, 3 = stopped, 0 = unknown)
+    
++ Response 200 (text/plain)
+
++ Response 400 (text/plain)
+
++ Response 404 (text/plain)
+
+### Get Peer [GET /peer/{peerName}{?adminKey]
+
+Get a peer (including registration code).
+
++ Parameters
+    + peerName: hanspeer (required, string) - Name of the peer.
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (application/json)
+
+        {"gid":"1","lastStatus":"1","peerName":"hanspeer","peerType":"1","publicKey":"MH4wEAYHKoZIzj0CAQYFK4EEACQDagAEAJig6xXX4SuME5lRB2ADn7T7CgyH7LXbxy/oS5XhIElBPwz/40cwDAc/VgGbDKa+HGBc/AGzwSlScoCDHc7WA1tSkRUkaW/lL9NbA6gIzJLMw+FV3RPor0vpJIofVcAaV6WI1r99v8Y=","registrationCode":"TEST","url":"https://localhost:12001/p2ds-input-peer/peer"}
+        
++ Response 403 (text/plain)
+
++ Response 404 (text/plain)
+
+### Start peers [POST /start/{gid}{?adminKey}]
+
+Starts all peers member of a group. This method will not start unverified peers.
+
++ Parameters
+    + gid: 1 (required, number) - ID of the group
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (text/plain)
+
++ Response 403 (text/plain)
+
+### Stop peers [POST /stop/{gid}{?adminKey}]
+
+Stops all peers member of a group.
+
++ Parameters
+    + gid: 1 (required, number) - ID of the group
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (text/plain)
+
++ Response 403 (text/plain)
+
+### Delete registration [DELETE /registration/{registrationCode}{?adminKey}]
+
+Delete a registration (code).
+
++ Parameters
+    + registrationCode: foobar (required, string) - Registration code
+    + adminKey: foobar (required, string) - Admin key
+    
++ Response 200 (text/plain)
+
++ Response 403 (text/plain)            
