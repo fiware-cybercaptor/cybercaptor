@@ -1,18 +1,16 @@
 FORMAT: 1A
-TITLE: CyberCAPTOR API Open Specification
-DATE: September 2015
 HOST: https://fiware-cybercaptor.github.io/
-VERSION: 4.4.3
-PREVIOUS_VERSION: 4.4.2
+TITLE: CyberSecurity API Open Specification
+DATE: September 2015
+VERSION: R4
 APIARY_PROJECT: cybercaptor
-SPEC_URL: https://fiware-cybercaptor.github.io/
 GITHUB_SOURCE: https://github.com/fiware-cybercaptor/cybercaptor
 
-# CyberCAPTOR API Open Specification
+# CyberSecurity API Open Specification
 
-This is the Open Specification of the REST API of **CyberCAPTOR**. It contains the API used between *CyberCAPTOR Server* and *CyberCAPTOR Client*, and the one of *CyberCAPTOR P2DS*.
+This is the Open Specification of the REST API of the **CyberSecurity** GE. It contains the API used between a *CyberSecurity GE Server* and a *CyberSecurity GE Client*, and the one of *CyberSecurity P2DS*.
 
-**CyberCAPTOR** implements the FIWARE CyberSecurity Generic Enabler.
+**CyberCAPTOR** is the reference implementation of the FIWARE CyberSecurity Generic Enabler.
 
 
 # Preface
@@ -23,18 +21,17 @@ This is the Open Specification of the REST API of **CyberCAPTOR**. It contains t
   2. Stephan Neuhaus, ZHAW
   3. Roman Müntener, ZHAW
 
-## Acknowledgements
-
 ## Status
 
-This is a release of the specifications of CyberCAPTOR. If you have any problem, comment or suggestion, please create an issue on the Github project: 
+This is the Release 4 of the GE Open API Specification.
 
-* https://github.com/fiware-cybercaptor/cybercaptor/issues
+This specification is licensed under the [FIWARE Open Specification License](http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_(implicit_patents_license)).
 
 ## Copyright
 
-This specification is licensed under the
-[GNU GENERAL PUBLIC LICENSE Version 3](https://raw.githubusercontent.com/fiware-cybercaptor/cybercaptor/master/LICENSE).
+Copyright © 2012-2015 by [THALES](http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Thales_sv).
+
+Copyright © 2014-2015 by [ZHAW](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/ZHAW).
 
 # Specifications
 
@@ -47,6 +44,12 @@ with managing groups of peers for privacy-preserving data sharing, or P2DS. P2DS
 is achieved through secure multiparty computation, or SMCP.
 
 ## Introduction
+
+The CyberSecurity GE Open API introduces three main concepts: 
+
+* Scored Attack Paths;
+* Remediations;
+* Privacy-Preserving Data Sharing.
 
 ### Scored Attack Paths
 
@@ -150,15 +153,17 @@ channel.
 model, in which adversaries try to learn the contents of messages but will not
 actively try to disrupt the protocol.
 
-## Concepts
+## Conformance
 
-Please refer to the Introduction for the concepts used in this specification.
+All the interfaces described by this specification are mandatory and must be implemented in order to be compliant with. 
 
-#### Group (object)
+## Data Structures
+
+### Group (object)
     + gid (number) - The group's identifier, guaranteed to be unique for this group manager.
     + name (string) - A descriptive name of a group
 
-#### PeerInfo (object)
+### PeerInfo (object)
     + gid (number) - The group to which this peer belongs.
     + lastStatus (number) - The last known status of this peer (unknown = 0, started = 1, error = 2, stopped = 3)
     + peerName (string) - A descriptive name for the peer.
@@ -166,15 +171,15 @@ Please refer to the Introduction for the concepts used in this specification.
     + publicKey (string) - The peer's public key.
     + url (string) - The URL at which to contact the peer.
 
-#### DataSet (object)
+### DataSet (object)
     + data (string) - semicolon seperated integers
     + peerName (string) - Name of the peer to add the data set for
 
-#### DataSets (object)
+### DataSets (object)
     + data (list) - List of semicolon seperated integers
     + peerName (string) - Name of the peer
 
-#### GroupConfigurationInfo (object)
+### GroupConfigurationInfo (object)
     + field (string) - Field value for the underlying MPC protocol; a good value is 9223372036854775783 (BigInteger as String)
     + maxElement (string) - Maximum value the underlying MPC protocol shall accept (BigINteger as String)
     + gid (int) - ID of the group
@@ -183,10 +188,10 @@ Please refer to the Introduction for the concepts used in this specification.
     + numberOfTimeSlots (int) - Number of time slots (in other terms, how many data sets are expected). Negative values mean an infinite amount (pure streaming).
     + resultBufferSize (number) - Size of the buffer for final results
 
-#### GroupName (object)
+### GroupName (object)
     + name (string) - Name of the group
 
-#### Peer (object)
+### Peer (object)
     + gid (number) - The group to which this peer belongs.
     + lastStatus (number) - The last known status of this peer (unknown = 0, started = 1, error = 2, stopped = 3)
     + peerName (string) - A descriptive name for the peer (informational only).
@@ -196,11 +201,11 @@ Please refer to the Introduction for the concepts used in this specification.
     + registrationCode (string) - The registration code used to register this peer.
     + verified (boolean) - Whether this peer has been marked as verified or not.
 
-#### Registration (object)
+### Registration (object)
     + gid (number) - ID of the group.
     + registrationCode (string) - The registration code.
 
-#### PeerConfigurationInfo (object)
+### PeerConfigurationInfo (object)
     + name (string) - Name of the peer
     + registrationCode (string) - Registration code
     + publicKey (string) - public key (base64 encoded)
@@ -209,10 +214,10 @@ Please refer to the Introduction for the concepts used in this specification.
     + peerType (int) - Type of the peer (1 = input peer, 2 = privacy peer)
     + finalResultsURL (string) - URL to send final results to.
 
-#### PeerConfigurationInfoCollection (object)
-    + peers - List of PeerConfiguration (peers)
+### PeerConfigurationInfoCollection (object)
+    + peers (list) - List of PeerConfiguration (peers)
 
-# Group CyberCAPTOR-Server REST API without inititialization
+# Group CyberSecurity REST API without inititialization
 This group of REST calls contains the API calls that **do not need** the `/initialize` call that loads the vulnerability and remediation database and generates the attack graph and the attack paths.
 
 ## Group Version [/rest/version]
@@ -367,7 +372,7 @@ From an XML IDMEF file containing alerts.
 
         {"success":"IDMEF alerts added successfully"}
 
-# Group CyberCAPTOR-Server REST API after initialization
+# Group CyberSecurity REST API after initialization
 This group contains thte API calls **after** the `/initialize` call that loads the vulnerability and remediation database and generates the attack graph and the attack paths.
 
 ## Initialize [/rest/json/initialize]
@@ -691,7 +696,7 @@ and their potential dynamic remediations that could prevent the described attack
             {"alerts":[]}
 
 
-# Group CyberCAPTOR-P2DS REST API
+# Group CyberSecurity-P2DS REST API
 
 ## Peer Service [/peer]
 
