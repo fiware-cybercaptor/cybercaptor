@@ -24,7 +24,7 @@ The deployment of [CyberCAPTOR-P2DS](https://github.com/fiware-cybercaptor/cyber
 
 # Deploying CyberCAPTOR-Client and CyberCAPTOR-Server in a few seconds with Docker
 
-CyberCAPTOR-Client](https://github.com/fiware-cybercaptor/cybercaptor-client) and [CyberCAPTOR-Server](https://github.com/fiware-cybercaptor/cybercaptor-server) can be deployed in a few seconds, using Docker.
+[CyberCAPTOR-Client](https://github.com/fiware-cybercaptor/cybercaptor-client) and [CyberCAPTOR-Server](https://github.com/fiware-cybercaptor/cybercaptor-server) can be deployed in a few seconds, using Docker.
 
 If you have Docker installed, launch the CyberCAPTOR-Server in a Terminal:
 
